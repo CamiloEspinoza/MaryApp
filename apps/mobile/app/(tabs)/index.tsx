@@ -75,7 +75,7 @@ export default function MaryScreen() {
   const handlePress = async () => {
     if (isConnected) {
       await endConversation();
-    } else if (status === 'disconnected') {
+    } else if (!isConnecting) {
       await startConversation();
     }
   };
@@ -174,7 +174,7 @@ export default function MaryScreen() {
           })}
         >
           <Ionicons
-            name={isConnected ? 'stop' : 'mic'}
+            name={isConnecting ? 'ellipsis-horizontal' : isConnected ? 'close' : 'mic'}
             size={36}
             color={colors.textLight}
           />

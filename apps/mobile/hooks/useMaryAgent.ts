@@ -17,15 +17,25 @@ interface TripContext {
 export function useMaryAgent() {
   const location = useLocation();
   const [activeTrip, setActiveTrip] = useState<TripContext | null>(null);
+  const [status, setStatus] = useState<'idle' | 'connecting' | 'connected' | 'disconnected'>('idle');
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
   const conversation = useConversation({
     onConnect: () => {
+      setStatus('connected');
       console.log('[Mary] Connected');
     },
     onDisconnect: () => {
+      setStatus('idle');
+      setIsSpeaking(false);
       console.log('[Mary] Disconnected');
     },
+    onModeChange: ({ mode }) => {
+      setIsSpeaking(mode === 'speaking');
+    },
     onError: (message) => {
+      setStatus('idle');
+      setIsSpeaking(false);
       console.error('[Mary] Error:', message);
     },
     onMessage: (message) => {
@@ -55,6 +65,7 @@ export function useMaryAgent() {
       return;
     }
 
+    setStatus('connecting');
     const prompt = buildPrompt();
 
     await conversation.startSession({
@@ -76,8 +87,8 @@ export function useMaryAgent() {
   }, [conversation]);
 
   return {
-    status: conversation.status,
-    isSpeaking: conversation.isSpeaking,
+    status,
+    isSpeaking,
     startConversation,
     endConversation,
     setActiveTrip,
