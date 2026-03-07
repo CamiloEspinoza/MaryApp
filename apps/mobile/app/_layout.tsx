@@ -1,13 +1,12 @@
-import "../global.css";
+import '../global.css';
 
-import { Stack } from "expo-router";
+import { Slot } from 'expo-router';
+import { ElevenLabsProvider } from '@elevenlabs/react-native';
 
 export default function RootLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    />
+    <ElevenLabsProvider>
+      <Slot />
+    </ElevenLabsProvider>
   );
 }

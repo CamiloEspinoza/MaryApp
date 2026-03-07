@@ -1,36 +1,51 @@
 {
   "expo": {
-    "name": "AI Tourist Guide",
+    "name": "Mary",
     "slug": "ai-tourist-guide",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#121212"
     },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.aitouristguide.app",
-      "appleTeamId": "YU36UCA73D"
+      "appleTeamId": "YU36UCA73D",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Mary necesita acceso al micrófono para la conversación de voz.",
+        "NSLocationWhenInUseUsageDescription": "Mary necesita tu ubicación para guiarte mejor."
+      }
     },
     "android": {
       "package": "com.aitouristguide.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#121212",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
-      }
+      },
+      "permissions": [
+        "RECORD_AUDIO",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Mary necesita tu ubicación para guiarte mejor."
+        }
+      ]
     ],
     "scheme": "aitouristguide"
   }
