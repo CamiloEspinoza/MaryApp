@@ -1,0 +1,10 @@
+{
+  "name": "@ai-tourist-guide/config",
+  "version": "0.0.1",
+  "private": true,
+  "main": "tsconfig.base.json",
+  "scripts": {},
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}
