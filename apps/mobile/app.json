@@ -14,7 +14,8 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.aitouristguide.app"
+      "bundleIdentifier": "com.aitouristguide.app",
+      "appleTeamId": "YU36UCA73D"
     },
     "android": {
       "package": "com.aitouristguide.app",
