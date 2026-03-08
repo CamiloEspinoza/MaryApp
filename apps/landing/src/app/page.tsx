@@ -68,8 +68,9 @@ function PhoneMockup() {
     >
       {/* Phone frame */}
       <div
-        className="relative bg-text overflow-hidden"
+        className="relative overflow-hidden"
         style={{
+          backgroundColor: "#1c0a08",
           borderRadius: 44,
           border: "8px solid #2e1a10",
           height: 600,
@@ -77,15 +78,15 @@ function PhoneMockup() {
       >
         {/* Notch */}
         <div
-          className="absolute top-3 left-1/2 -translate-x-1/2 bg-text z-10"
-          style={{ width: 100, height: 28, borderRadius: 16 }}
+          className="absolute top-3 left-1/2 -translate-x-1/2 z-10"
+          style={{ width: 100, height: 28, borderRadius: 16, backgroundColor: "#1c0a08" }}
         />
 
         {/* Screen */}
         <div className="bg-cream h-full flex flex-col overflow-hidden">
           {/* Status bar */}
           <div className="bg-cream pt-6 pb-2 px-5 flex justify-between items-center shrink-0">
-            <span className="text-[11px] text-text-muted font-medium" style={{ fontFamily: "var(--font-dm-sans)" }}>
+            <span className="text-[11px] text-muted font-medium" style={{ fontFamily: "var(--font-dm-sans)" }}>
               9:41
             </span>
             <div className="flex items-center gap-1">
@@ -133,7 +134,7 @@ function PhoneMockup() {
                 className="bg-white rounded-2xl rounded-bl-sm px-3 py-2 shadow-sm max-w-[180px]"
                 style={{ border: "1px solid #f0ebe0" }}
               >
-                <p className="text-[11px] text-text leading-relaxed" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                <p className="text-[11px] text-ink leading-relaxed" style={{ fontFamily: "var(--font-dm-sans)" }}>
                   ¡Hola! Soy Mary 👋 ¿A dónde quieres viajar?
                 </p>
               </div>
@@ -157,7 +158,7 @@ function PhoneMockup() {
                 className="bg-white rounded-2xl rounded-bl-sm px-3 py-2 shadow-sm max-w-[190px]"
                 style={{ border: "1px solid #f0ebe0" }}
               >
-                <p className="text-[11px] text-text leading-relaxed" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                <p className="text-[11px] text-ink leading-relaxed" style={{ fontFamily: "var(--font-dm-sans)" }}>
                   ¡Qué buena elección! Encontré vuelos desde €89. ¿Necesitas hotel con acceso accesible?
                 </p>
               </div>
@@ -168,15 +169,15 @@ function PhoneMockup() {
               className="bg-white rounded-2xl p-3 shadow-sm"
               style={{ border: "1px solid #f0ebe0" }}
             >
-              <p className="text-[9px] text-text-muted uppercase tracking-wider mb-1.5" style={{ fontFamily: "var(--font-dm-sans)" }}>
+              <p className="text-[9px] text-muted uppercase tracking-wider mb-1.5" style={{ fontFamily: "var(--font-dm-sans)" }}>
                 Vuelo recomendado
               </p>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-[12px] font-semibold text-text" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                  <p className="text-[12px] font-semibold text-ink" style={{ fontFamily: "var(--font-dm-sans)" }}>
                     MAD → LIS
                   </p>
-                  <p className="text-[10px] text-text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                  <p className="text-[10px] text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>
                     Iberia · 1h 50m directo
                   </p>
                 </div>
@@ -184,7 +185,7 @@ function PhoneMockup() {
                   <p className="text-[14px] font-bold text-burgundy" style={{ fontFamily: "var(--font-dm-sans)" }}>
                     €89
                   </p>
-                  <p className="text-[9px] text-text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>por persona</p>
+                  <p className="text-[9px] text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>por persona</p>
                 </div>
               </div>
             </div>
@@ -196,7 +197,7 @@ function PhoneMockup() {
             style={{ borderTop: "1px solid #f0ebe0" }}
           >
             <div className="flex-1 bg-cream rounded-full px-4 py-2">
-              <p className="text-[10px] text-text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>
+              <p className="text-[10px] text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>
                 Habla con Mary...
               </p>
             </div>
@@ -213,41 +214,6 @@ function PhoneMockup() {
         </div>
       </div>
 
-      {/* Floating card — accessibility */}
-      <div
-        className="absolute -left-16 top-36 bg-white rounded-2xl shadow-xl px-4 py-3 border border-cream-border"
-        style={{ minWidth: 160 }}
-      >
-        <p className="text-[9px] text-text-muted uppercase tracking-wider mb-1" style={{ fontFamily: "var(--font-dm-sans)" }}>
-          Accesibilidad
-        </p>
-        <div className="flex items-center gap-2">
-          <span className="text-base">♿</span>
-          <p className="text-[11px] font-semibold text-text" style={{ fontFamily: "var(--font-dm-sans)" }}>
-            Sin escaleras ✓
-          </p>
-        </div>
-      </div>
-
-      {/* Floating card — destination rating */}
-      <div
-        className="absolute -right-12 bottom-32 bg-white rounded-2xl shadow-xl px-4 py-3 border border-cream-border"
-        style={{ minWidth: 140 }}
-      >
-        <p className="text-[9px] text-text-muted mb-1" style={{ fontFamily: "var(--font-dm-sans)" }}>
-          🗼 Lisboa, Portugal
-        </p>
-        <div className="flex items-center gap-0.5">
-          {[1, 2, 3, 4, 5].map((i) => (
-            <svg key={i} width="9" height="9" viewBox="0 0 10 10" fill="#800020">
-              <path d="M5 0l1.12 3.44H9.76L6.82 5.57l1.09 3.43L5 6.85 2.09 9 3.18 5.57.24 3.44H3.88z" />
-            </svg>
-          ))}
-          <span className="text-[9px] text-text-muted ml-1" style={{ fontFamily: "var(--font-dm-sans)" }}>
-            4.9
-          </span>
-        </div>
-      </div>
     </div>
   );
 }
@@ -267,7 +233,7 @@ function Navbar() {
               MARY
             </span>
             <p
-              className="text-[8px] tracking-[0.18em] text-text-muted uppercase leading-none mt-0.5"
+              className="text-[8px] tracking-[0.18em] text-muted uppercase leading-none mt-0.5"
               style={{ fontFamily: "var(--font-dm-sans)" }}
             >
               Tu compañera de viaje
@@ -277,14 +243,14 @@ function Navbar() {
         <div className="hidden md:flex items-center gap-8">
           <a
             href="#como-funciona"
-            className="text-sm text-text-muted hover:text-burgundy transition-colors"
+            className="text-sm text-muted hover:text-burgundy transition-colors"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
             Cómo funciona
           </a>
           <a
             href="#funcionalidades"
-            className="text-sm text-text-muted hover:text-burgundy transition-colors"
+            className="text-sm text-muted hover:text-burgundy transition-colors"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
             Funcionalidades
@@ -338,7 +304,7 @@ function Hero() {
 
             {/* Headline */}
             <h1
-              className="animate-fade-up delay-100 text-[clamp(3rem,6vw,5rem)] font-semibold leading-[1.08] text-text mb-6"
+              className="animate-fade-up delay-100 text-[clamp(3rem,6vw,5rem)] font-semibold leading-[1.08] text-ink mb-6"
               style={{ fontFamily: "var(--font-cormorant)" }}
             >
               ¿Lista para tu
@@ -350,12 +316,12 @@ function Hero() {
 
             {/* Description */}
             <p
-              className="animate-fade-up delay-200 text-[15px] text-text-muted leading-[1.8] mb-8 max-w-[420px]"
+              className="animate-fade-up delay-200 text-[15px] text-muted leading-[1.8] mb-8 max-w-[420px]"
               style={{ fontFamily: "var(--font-dm-sans)" }}
             >
               Conoce a Mary, tu asistente personal de IA. Ella se encarga de
               los detalles{" "}
-              <strong className="text-text font-medium">
+              <strong className="text-ink font-medium">
                 (vuelos, accesibilidad, rutas sin escaleras)
               </strong>{" "}
               para que tú solo disfrutes.
@@ -397,7 +363,7 @@ function Hero() {
               ].map((s) => (
                 <div key={s.n}>
                   <p className="text-xl font-semibold text-burgundy">{s.n}</p>
-                  <p className="text-[11px] text-text-muted">{s.label}</p>
+                  <p className="text-[11px] text-muted">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -459,7 +425,7 @@ function Features() {
             Funcionalidades
           </p>
           <h2
-            className="text-[clamp(2rem,4vw,3.25rem)] font-semibold text-text leading-tight"
+            className="text-[clamp(2rem,4vw,3.25rem)] font-semibold text-ink leading-tight"
             style={{ fontFamily: "var(--font-cormorant)" }}
           >
             Todo lo que Mary hace
@@ -476,13 +442,13 @@ function Features() {
             >
               <div className="text-2xl mb-3">{f.icon}</div>
               <h3
-                className="text-xl font-semibold text-text mb-2"
+                className="text-xl font-semibold text-ink mb-2"
                 style={{ fontFamily: "var(--font-cormorant)" }}
               >
                 {f.title}
               </h3>
               <p
-                className="text-sm text-text-muted leading-relaxed"
+                className="text-sm text-muted leading-relaxed"
                 style={{ fontFamily: "var(--font-dm-sans)" }}
               >
                 {f.desc}
@@ -529,7 +495,7 @@ function HowItWorks() {
             Cómo funciona
           </p>
           <h2
-            className="text-[clamp(2rem,4vw,3.25rem)] font-semibold text-text leading-tight"
+            className="text-[clamp(2rem,4vw,3.25rem)] font-semibold text-ink leading-tight"
             style={{ fontFamily: "var(--font-cormorant)" }}
           >
             Tres pasos para
@@ -559,13 +525,13 @@ function HowItWorks() {
                     {step.num}
                   </p>
                   <h3
-                    className="text-2xl font-semibold text-text mb-2"
+                    className="text-2xl font-semibold text-ink mb-2"
                     style={{ fontFamily: "var(--font-cormorant)" }}
                   >
                     {step.title}
                   </h3>
                   <p
-                    className="text-sm text-text-muted leading-relaxed"
+                    className="text-sm text-muted leading-relaxed"
                     style={{ fontFamily: "var(--font-dm-sans)" }}
                   >
                     {step.desc}
@@ -617,7 +583,7 @@ function Testimonials() {
             Historias reales
           </p>
           <h2
-            className="text-[clamp(2rem,4vw,3.25rem)] font-semibold text-text leading-tight"
+            className="text-[clamp(2rem,4vw,3.25rem)] font-semibold text-ink leading-tight"
             style={{ fontFamily: "var(--font-cormorant)" }}
           >
             Lo que dicen nuestras
@@ -639,7 +605,7 @@ function Testimonials() {
                 &ldquo;
               </span>
               <p
-                className="text-sm text-text leading-[1.75] flex-1"
+                className="text-sm text-ink leading-[1.75] flex-1"
                 style={{ fontFamily: "var(--font-dm-sans)" }}
               >
                 {t.quote}
@@ -649,8 +615,8 @@ function Testimonials() {
                   {t.avatar}
                 </div>
                 <div style={{ fontFamily: "var(--font-dm-sans)" }}>
-                  <p className="text-sm font-medium text-text">{t.name}</p>
-                  <p className="text-xs text-text-muted">{t.location}</p>
+                  <p className="text-sm font-medium text-ink">{t.name}</p>
+                  <p className="text-xs text-muted">{t.location}</p>
                 </div>
               </div>
             </div>
@@ -745,7 +711,7 @@ function Footer() {
                 MARY
               </span>
               <p
-                className="text-[8px] tracking-[0.18em] text-text-muted uppercase leading-none mt-0.5"
+                className="text-[8px] tracking-[0.18em] text-muted uppercase leading-none mt-0.5"
                 style={{ fontFamily: "var(--font-dm-sans)" }}
               >
                 Tu compañera de viaje
@@ -754,7 +720,7 @@ function Footer() {
           </div>
 
           <nav
-            className="flex items-center gap-6 text-xs text-text-muted"
+            className="flex items-center gap-6 text-xs text-muted"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
             <a href="#" className="hover:text-rose transition-colors">Privacidad</a>
@@ -763,7 +729,7 @@ function Footer() {
           </nav>
 
           <p
-            className="text-xs text-text-muted/50"
+            className="text-xs text-muted/50"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
             © {new Date().getFullYear()} Mary. Hecho con ♥ para viajeras.

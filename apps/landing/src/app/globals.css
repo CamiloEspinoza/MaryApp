@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Literal color tokens — no var() here */
 @theme {
   --color-burgundy: #800020;
   --color-burgundy-hover: #9a0027;
@@ -7,18 +8,16 @@
   --color-cream: #f8f4ed;
   --color-cream-alt: #f0ebe0;
   --color-cream-border: #d9d0c0;
-  --color-text: #1c0a08;
-  --color-text-muted: #7a6254;
+  --color-ink: #1c0a08;
+  --color-muted: #7a6254;
   --color-rose: #c19a9b;
   --color-rose-light: #f5e8e8;
-
-  --font-display: var(--font-cormorant);
-  --font-sans: var(--font-dm-sans);
 }
 
-:root {
-  --background: #f8f4ed;
-  --foreground: #1c0a08;
+/* Font CSS-variable references require @theme inline */
+@theme inline {
+  --font-display: var(--font-cormorant);
+  --font-sans: var(--font-dm-sans);
 }
 
 *,
@@ -34,8 +33,8 @@ html {
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
+  background-color: #f8f4ed;
+  color: #1c0a08;
   font-family: var(--font-dm-sans), "DM Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -87,17 +86,6 @@ body {
   }
 }
 
-@keyframes slide-right {
-  from {
-    opacity: 0;
-    transform: translateX(-24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
 .animate-fade-up {
   opacity: 0;
   animation: fade-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -106,11 +94,6 @@ body {
 .animate-fade-in {
   opacity: 0;
   animation: fade-in 0.9s ease forwards;
-}
-
-.animate-slide-right {
-  opacity: 0;
-  animation: slide-right 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .delay-100 { animation-delay: 0.1s; }

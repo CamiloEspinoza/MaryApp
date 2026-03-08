@@ -126,6 +126,21 @@ export class TripsService {
     });
   }
 
+  async resolveTripId(userId: string, tripIdOrTitle: string): Promise<string | null> {
+    // Try exact ID first
+    const byId = await this.prisma.trip.findFirst({
+      where: { id: tripIdOrTitle, userId },
+    });
+    if (byId) return byId.id;
+
+    // Fallback: search by title (case-insensitive, most recent)
+    const byTitle = await this.prisma.trip.findFirst({
+      where: { userId, title: { contains: tripIdOrTitle, mode: 'insensitive' } },
+      orderBy: { createdAt: 'desc' },
+    });
+    return byTitle?.id ?? null;
+  }
+
   async addItineraryItem(tripId: string, userId: string, data: {
     date: string;
     type?: string;
