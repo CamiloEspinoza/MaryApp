@@ -1,10 +1,8 @@
 @import "tailwindcss";
 
-/* Explicitly tell Tailwind v4 where to scan for utility classes.
-   Path is relative to this CSS file (src/app/globals.css → ../../ = apps/landing/) */
-@source "../..";
+@source "../../src";
 
-/* Literal color tokens — no var() here */
+/* Literal color tokens */
 @theme {
   --color-burgundy: #800020;
   --color-burgundy-hover: #9a0027;
@@ -24,72 +22,51 @@
   --font-sans: var(--font-dm-sans);
 }
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/*
+  Base overrides go inside @layer base so they DON'T override Tailwind utilities.
+  Unlayered CSS has higher cascade priority than @layer utilities — never put
+  margin/padding resets outside a layer.
+*/
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #f8f4ed;
+    color: #1c0a08;
+    font-family: var(--font-dm-sans), "DM Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: #f8f4ed; }
+  ::-webkit-scrollbar-thumb { background: #800020; border-radius: 2px; }
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  background-color: #f8f4ed;
-  color: #1c0a08;
-  font-family: var(--font-dm-sans), "DM Sans", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* Voice waveform bars */
+/* Keyframes are fine outside layers */
 @keyframes voice-bar {
-  0%,
-  100% {
-    transform: scaleY(0.3);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scaleY(1);
-    opacity: 1;
-  }
+  0%, 100% { transform: scaleY(0.3); opacity: 0.4; }
+  50%       { transform: scaleY(1);   opacity: 1;   }
 }
 
-/* Pulse ring */
 @keyframes pulse-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-  100% {
-    transform: scale(1.8);
-    opacity: 0;
-  }
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0;   }
 }
 
-/* Entrance animations */
 @keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(28px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0);    }
 }
 
 @keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
+/* Custom animation utility classes */
 .animate-fade-up {
   opacity: 0;
   animation: fade-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -108,8 +85,3 @@ body {
 .delay-600 { animation-delay: 0.6s; }
 .delay-700 { animation-delay: 0.7s; }
 .delay-800 { animation-delay: 0.8s; }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: #f8f4ed; }
-::-webkit-scrollbar-thumb { background: #800020; border-radius: 2px; }

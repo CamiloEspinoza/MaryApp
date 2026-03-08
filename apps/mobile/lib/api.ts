@@ -60,6 +60,7 @@ export interface Trip {
     arrivalTime: string;
     cost: number | null;
     currency: string | null;
+    bookingRef: string | null;
   }[];
   accommodations?: {
     id: string;

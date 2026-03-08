@@ -31,6 +31,11 @@ export class AgentToolsController {
     return body.parameters ?? body;
   }
 
+  // Accept both camelCase (from ElevenLabs client tools) and snake_case (legacy)
+  private p(params: any, camel: string, snake?: string): any {
+    return params[camel] ?? (snake ? params[snake] : undefined);
+  }
+
   private getUserId(req: Request): string {
     return (req as any)['user']?.sub ?? '';
   }
@@ -43,14 +48,34 @@ export class AgentToolsController {
       userId: this.getUserId(req),
       title: p.title,
       destination: p.destination,
-      startDate: p.start_date,
-      endDate: p.end_date,
+      startDate: this.p(p, 'startDate', 'start_date'),
+      endDate: this.p(p, 'endDate', 'end_date'),
       objectives: p.objectives,
       participants: p.participants,
     });
     return {
-      result: `Viaje "${trip.title}" creado con éxito a ${trip.destination}. ID: ${trip.id}`,
+      result: JSON.stringify({
+        success: true,
+        trip_id: trip.id,
+        title: trip.title,
+        destination: trip.destination,
+        message: `Viaje creado. GUARDA ESTE ID para usarlo en add_transportation, add_accommodation y add_itinerary_item: trip_id="${trip.id}"`,
+      }),
     };
+  }
+
+  @Post('delete_trip')
+  async deleteTrip(@Req() req: Request, @Body() body: any) {
+    const p = this.params(body);
+    this.logger.log(`delete_trip: ${JSON.stringify(p)}`);
+    const userId = this.getUserId(req);
+    const rawId = this.p(p, 'tripId', 'trip_id');
+    const tripId = await this.trips.resolveTripId(userId, rawId);
+    if (!tripId) {
+      return { result: `No encontré ningún viaje con ese nombre o ID. Llama a get_my_trips para ver los viajes disponibles.` };
+    }
+    await this.trips.delete(tripId, userId);
+    return { result: `Viaje eliminado correctamente.` };
   }
 
   @Post('get_my_trips')
@@ -82,9 +107,9 @@ export class AgentToolsController {
       const results = await this.amadeus.searchFlights(
         p.origin,
         p.destination,
-        p.departure_date,
+        this.p(p, 'departureDate', 'departure_date'),
         p.adults ?? 1,
-        p.return_date,
+        this.p(p, 'returnDate', 'return_date'),
       );
       if (results.length === 0) {
         return { result: 'No se encontraron vuelos para esas fechas y ruta.' };
@@ -114,16 +139,19 @@ export class AgentToolsController {
     const p = this.params(body);
     this.logger.log(`search_hotels: ${JSON.stringify(p)}`);
     try {
-      const hotels = await this.amadeus.searchHotelsByCity(p.city_code);
+      const cityCode = this.p(p, 'cityCode', 'city_code');
+      const hotels = await this.amadeus.searchHotelsByCity(cityCode);
       if (hotels.length === 0) {
         return { result: 'No se encontraron hoteles en esa ciudad.' };
       }
 
       let source: any[] = hotels;
-      if (p.check_in && p.check_out) {
+      const checkIn = this.p(p, 'checkIn', 'check_in') ?? this.p(p, 'checkInDate', 'check_in_date');
+      const checkOut = this.p(p, 'checkOut', 'check_out') ?? this.p(p, 'checkOutDate', 'check_out_date');
+      if (checkIn && checkOut) {
         const hotelIds = hotels.map((h: any) => h.hotelId);
         source = await this.amadeus.searchHotelOffers(
-          hotelIds, p.check_in, p.check_out, p.adults ?? 1,
+          hotelIds, checkIn, checkOut, p.adults ?? 1,
         );
       }
 
@@ -175,20 +203,26 @@ export class AgentToolsController {
   async addTransportation(@Req() req: Request, @Body() body: any) {
     const p = this.params(body);
     this.logger.log(`add_transportation: ${JSON.stringify(p)}`);
+    const userId = this.getUserId(req);
+    const rawId = this.p(p, 'tripId', 'trip_id');
+    const tripId = await this.trips.resolveTripId(userId, rawId);
+    if (!tripId) {
+      return { result: `No encontré el viaje "${rawId}". Llama a get_my_trips para obtener el trip_id correcto.` };
+    }
     const transport = await this.trips.addTransportation(
-      p.trip_id,
-      this.getUserId(req),
+      tripId,
+      userId,
       {
         type: p.type ?? 'FLIGHT',
         origin: p.origin,
         destination: p.destination,
         carrier: p.carrier,
-        flightNumber: p.flight_number,
-        departureTime: p.departure_time,
-        arrivalTime: p.arrival_time,
-        cost: p.cost,
+        flightNumber: this.p(p, 'flightNumber', 'flight_number'),
+        departureTime: this.p(p, 'departureTime', 'departure_time'),
+        arrivalTime: this.p(p, 'arrivalTime', 'arrival_time'),
+        cost: this.p(p, 'cost', 'price'),
         currency: p.currency,
-        bookingRef: p.booking_ref,
+        bookingRef: this.p(p, 'bookingRef', 'booking_ref'),
       },
     );
     return { result: `Transporte agregado al viaje. ID: ${transport.id}` };
@@ -198,18 +232,24 @@ export class AgentToolsController {
   async addAccommodation(@Req() req: Request, @Body() body: any) {
     const p = this.params(body);
     this.logger.log(`add_accommodation: ${JSON.stringify(p)}`);
+    const userId = this.getUserId(req);
+    const rawId = this.p(p, 'tripId', 'trip_id');
+    const tripId = await this.trips.resolveTripId(userId, rawId);
+    if (!tripId) {
+      return { result: `No encontré el viaje "${rawId}". Llama a get_my_trips para obtener el trip_id correcto.` };
+    }
     const accommodation = await this.trips.addAccommodation(
-      p.trip_id,
-      this.getUserId(req),
+      tripId,
+      userId,
       {
         name: p.name,
         address: p.address,
-        checkIn: p.check_in,
-        checkOut: p.check_out,
-        cost: p.cost,
+        checkIn: this.p(p, 'checkIn', 'check_in') ?? this.p(p, 'checkInDate', 'check_in_date'),
+        checkOut: this.p(p, 'checkOut', 'check_out') ?? this.p(p, 'checkOutDate', 'check_out_date'),
+        cost: this.p(p, 'cost', 'price'),
         currency: p.currency,
-        bookingRef: p.booking_ref,
-        amadeusHotelId: p.amadeus_hotel_id,
+        bookingRef: this.p(p, 'bookingRef', 'booking_ref'),
+        amadeusHotelId: this.p(p, 'amadeusHotelId', 'amadeus_hotel_id'),
       },
     );
     return { result: `Alojamiento "${accommodation.name}" agregado al viaje. ID: ${accommodation.id}` };
@@ -219,18 +259,24 @@ export class AgentToolsController {
   async addItineraryItem(@Req() req: Request, @Body() body: any) {
     const p = this.params(body);
     this.logger.log(`add_itinerary_item: ${JSON.stringify(p)}`);
+    const userId = this.getUserId(req);
+    const rawId = this.p(p, 'tripId', 'trip_id');
+    const tripId = await this.trips.resolveTripId(userId, rawId);
+    if (!tripId) {
+      return { result: `No encontré el viaje "${rawId}". Llama a get_my_trips para obtener el trip_id correcto.` };
+    }
     const item = await this.trips.addItineraryItem(
-      p.trip_id,
-      this.getUserId(req),
+      tripId,
+      userId,
       {
         date: p.date,
         type: p.type,
         title: p.title,
-        description: p.description,
+        description: p.description ?? p.notes,
         location: p.location,
-        startTime: p.start_time,
-        endTime: p.end_time,
-        cost: p.cost,
+        startTime: this.p(p, 'startTime', 'start_time'),
+        endTime: this.p(p, 'endTime', 'end_time'),
+        cost: this.p(p, 'cost', 'price'),
         currency: p.currency,
       },
     );

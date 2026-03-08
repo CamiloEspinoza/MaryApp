@@ -35,10 +35,12 @@ export interface ToolEvent {
   status: 'loading' | 'done' | 'error';
   results?: ResultItem[];
   message?: string;
+  isError?: boolean;
 }
 
 const TOOL_LABELS: Record<string, { label: string; icon: string }> = {
   create_trip: { label: 'Creando viaje', icon: 'airplane' },
+  delete_trip: { label: 'Eliminando viaje', icon: 'trash-outline' },
   get_my_trips: { label: 'Consultando viajes', icon: 'list' },
   search_flights: { label: 'Buscando vuelos', icon: 'airplane-outline' },
   search_hotels: { label: 'Buscando hoteles', icon: 'bed-outline' },
@@ -53,6 +55,7 @@ const TOOL_LABELS: Record<string, { label: string; icon: string }> = {
 
 const TRIP_MODIFYING_TOOLS = new Set([
   'create_trip',
+  'delete_trip',
   'add_transportation',
   'add_accommodation',
   'add_itinerary_item',
@@ -108,16 +111,23 @@ export function MaryAgentProvider({ children }: { children: React.ReactNode }) {
     name: string,
     results?: ResultItem[],
     message?: string,
+    isError?: boolean,
   ) => {
-    console.log(`[Mary] Tool done: ${name}`, results?.length ?? 0, 'items');
+    console.log(`[Mary] Tool done: ${name}`, results?.length ?? 0, 'items', isError ? '(error)' : '');
     setToolEvents((prev) => {
       const idx = prev.findIndex((e) => e.id === id);
       if (idx === -1) return prev;
       const updated = [...prev];
-      updated[idx] = { ...updated[idx], status: 'done', results, message };
+      updated[idx] = {
+        ...updated[idx],
+        status: isError ? 'error' : 'done',
+        results,
+        message,
+        isError,
+      };
       return updated;
     });
-    if (TRIP_MODIFYING_TOOLS.has(name)) {
+    if (!isError && TRIP_MODIFYING_TOOLS.has(name)) {
       setLastTripUpdate(Date.now());
     }
   }, []);
@@ -134,7 +144,12 @@ export function MaryAgentProvider({ children }: { children: React.ReactNode }) {
       },
       body: JSON.stringify({ ...params, user_id: userRef.current?.id ?? '' }),
     });
-    return res.json();
+    const data = await res.json();
+    if (!res.ok) {
+      console.error(`[Mary] Backend error ${path}:`, res.status, data);
+      throw new Error(data.message ?? `Error ${res.status}`);
+    }
+    return data;
   }, []);
 
   const parseItems = useCallback((raw: any): ResultItem[] | undefined => {
@@ -155,87 +170,163 @@ export function MaryAgentProvider({ children }: { children: React.ReactNode }) {
   const clientTools = useMemo(() => ({
     create_trip: async (params: any) => {
       const id = startTool('create_trip');
-      const res = await callBackend('create_trip', params);
-      finishTool(id, 'create_trip', undefined, res.result);
-      return res.result;
+      try {
+        const res = await callBackend('create_trip', params);
+        // Parse the structured response to extract trip_id for the LLM
+        let summary = res.result;
+        try {
+          const parsed = typeof res.result === 'string' ? JSON.parse(res.result) : res.result;
+          if (parsed?.trip_id) {
+            summary = `Viaje creado exitosamente. trip_id: ${parsed.trip_id}. Título: ${parsed.title}. Destino: ${parsed.destination}. IMPORTANTE: usa trip_id="${parsed.trip_id}" para add_transportation, add_accommodation y add_itinerary_item.`;
+          }
+        } catch { /* use raw result */ }
+        finishTool(id, 'create_trip', undefined, summary);
+        return summary;
+      } catch (e: any) {
+        finishTool(id, 'create_trip', undefined, e.message, true);
+        return `Error: ${e.message}`;
+      }
+    },
+
+    delete_trip: async (params: any) => {
+      const id = startTool('delete_trip');
+      try {
+        const res = await callBackend('delete_trip', params);
+        finishTool(id, 'delete_trip', undefined, res.result);
+        return res.result;
+      } catch (e: any) {
+        finishTool(id, 'delete_trip', undefined, e.message, true);
+        return `Error: ${e.message}`;
+      }
     },
 
     get_my_trips: async (_params: any) => {
       const id = startTool('get_my_trips');
-      const res = await callBackend('get_my_trips', {});
-      finishTool(id, 'get_my_trips');
-      return JSON.stringify(res.result ?? res);
+      try {
+        const res = await callBackend('get_my_trips', {});
+        finishTool(id, 'get_my_trips');
+        return JSON.stringify(res.result ?? res);
+      } catch (e: any) {
+        finishTool(id, 'get_my_trips', undefined, e.message, true);
+        return `Error: ${e.message}`;
+      }
     },
 
     search_flights: async (params: any) => {
       const id = startTool('search_flights');
-      const res = await callBackend('search_flights', params);
-      const items = parseItems(res);
-      finishTool(id, 'search_flights', items);
-      const obj = typeof res.result === 'string' ? JSON.parse(res.result).summary : res.result;
-      return typeof obj === 'string' ? obj : (res.result ?? 'Búsqueda completada');
+      try {
+        const res = await callBackend('search_flights', params);
+        const items = parseItems(res);
+        finishTool(id, 'search_flights', items);
+        try { return JSON.parse(res.result).summary; } catch { return res.result ?? 'Búsqueda completada'; }
+      } catch (e: any) {
+        finishTool(id, 'search_flights', undefined, e.message, true);
+        return `Error buscando vuelos: ${e.message}`;
+      }
     },
 
     search_hotels: async (params: any) => {
       const id = startTool('search_hotels');
-      const res = await callBackend('search_hotels', params);
-      const items = parseItems(res);
-      finishTool(id, 'search_hotels', items);
-      try { return JSON.parse(res.result).summary; } catch { return res.result ?? 'Búsqueda completada'; }
+      try {
+        const res = await callBackend('search_hotels', params);
+        const items = parseItems(res);
+        finishTool(id, 'search_hotels', items);
+        try { return JSON.parse(res.result).summary; } catch { return res.result ?? 'Búsqueda completada'; }
+      } catch (e: any) {
+        finishTool(id, 'search_hotels', undefined, e.message, true);
+        return `Error buscando hoteles: ${e.message}`;
+      }
     },
 
     search_places: async (params: any) => {
       const id = startTool('search_places');
-      const res = await callBackend('search_places', params);
-      const items = parseItems(res);
-      finishTool(id, 'search_places', items);
-      try { return JSON.parse(res.result).summary; } catch { return res.result ?? 'Búsqueda completada'; }
+      try {
+        const res = await callBackend('search_places', params);
+        const items = parseItems(res);
+        console.log('[Mary] search_places items:', items?.length ?? 0, JSON.stringify(items?.[0]));
+        finishTool(id, 'search_places', items);
+        try { return JSON.parse(res.result).summary; } catch { return res.result ?? 'Búsqueda completada'; }
+      } catch (e: any) {
+        console.error('[Mary] search_places error:', e.message);
+        finishTool(id, 'search_places', undefined, e.message, true);
+        return `Error buscando lugares: ${e.message}`;
+      }
     },
 
     search_web: async (params: any) => {
       const id = startTool('search_web');
-      const res = await callBackend('search_web', params);
-      const items = parseItems(res);
-      finishTool(id, 'search_web', items);
-      try { return JSON.parse(res.result).summary; } catch { return res.result ?? 'Búsqueda completada'; }
+      try {
+        const res = await callBackend('search_web', params);
+        const items = parseItems(res);
+        finishTool(id, 'search_web', items);
+        try { return JSON.parse(res.result).summary; } catch { return res.result ?? 'Búsqueda completada'; }
+      } catch (e: any) {
+        finishTool(id, 'search_web', undefined, e.message, true);
+        return `Error buscando en internet: ${e.message}`;
+      }
     },
 
     add_transportation: async (params: any) => {
       const id = startTool('add_transportation');
-      const res = await callBackend('add_transportation', params);
-      finishTool(id, 'add_transportation', undefined, res.result);
-      return res.result;
+      try {
+        const res = await callBackend('add_transportation', params);
+        finishTool(id, 'add_transportation', undefined, res.result);
+        return res.result;
+      } catch (e: any) {
+        finishTool(id, 'add_transportation', undefined, e.message, true);
+        return `Error: ${e.message}`;
+      }
     },
 
     add_accommodation: async (params: any) => {
       const id = startTool('add_accommodation');
-      const res = await callBackend('add_accommodation', params);
-      finishTool(id, 'add_accommodation', undefined, res.result);
-      return res.result;
+      try {
+        const res = await callBackend('add_accommodation', params);
+        finishTool(id, 'add_accommodation', undefined, res.result);
+        return res.result;
+      } catch (e: any) {
+        finishTool(id, 'add_accommodation', undefined, e.message, true);
+        return `Error: ${e.message}`;
+      }
     },
 
     add_itinerary_item: async (params: any) => {
       const id = startTool('add_itinerary_item');
-      const res = await callBackend('add_itinerary_item', params);
-      finishTool(id, 'add_itinerary_item', undefined, res.result);
-      return res.result;
+      try {
+        const res = await callBackend('add_itinerary_item', params);
+        finishTool(id, 'add_itinerary_item', undefined, res.result);
+        return res.result;
+      } catch (e: any) {
+        finishTool(id, 'add_itinerary_item', undefined, e.message, true);
+        return `Error: ${e.message}`;
+      }
     },
 
     save_memory: async (params: any) => {
       const id = startTool('save_memory');
-      const res = await callBackend('save_memory', params);
-      finishTool(id, 'save_memory', undefined, res.result);
-      return res.result;
+      try {
+        const res = await callBackend('save_memory', params);
+        finishTool(id, 'save_memory', undefined, res.result);
+        return res.result;
+      } catch (e: any) {
+        finishTool(id, 'save_memory', undefined, e.message, true);
+        return `Error: ${e.message}`;
+      }
     },
 
     recall_memory: async (params: any) => {
       const id = startTool('recall_memory');
-      const res = await callBackend('recall_memory', params);
-      const memories = res.result?.memories;
-      finishTool(id, 'recall_memory', undefined);
-      return memories
-        ? memories.map((m: any) => `[${m.category}] ${m.content}`).join('\n')
-        : (typeof res.result === 'string' ? res.result : 'Sin resultados en memoria.');
+      try {
+        const res = await callBackend('recall_memory', params);
+        const memories = res.result?.memories;
+        finishTool(id, 'recall_memory', undefined);
+        return memories
+          ? memories.map((m: any) => `[${m.category}] ${m.content}`).join('\n')
+          : (typeof res.result === 'string' ? res.result : 'Sin resultados en memoria.');
+      } catch (e: any) {
+        finishTool(id, 'recall_memory', undefined, e.message, true);
+        return 'Sin resultados en memoria.';
+      }
     },
   }), [startTool, finishTool, callBackend, parseItems]);
 

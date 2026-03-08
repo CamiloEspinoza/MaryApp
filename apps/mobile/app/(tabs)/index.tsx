@@ -184,18 +184,24 @@ function ToolEventChip({
   }, []);
 
   const isDone = event.status === 'done';
+  const isError = event.status === 'error';
+  const isLoading = event.status === 'loading';
   const hasResults = isDone && event.results && event.results.length > 0;
-  const colorScheme = TOOL_ICON_MAP[event.name] ?? { bg: colors.surfaceLight, color: colors.accent };
+  const colorScheme = isError
+    ? { bg: '#3a1a1a', color: '#d55b5b' }
+    : (TOOL_ICON_MAP[event.name] ?? { bg: colors.surfaceLight, color: colors.accent });
 
   return (
     <Animated.View style={[animatedStyle, { marginBottom: hasResults ? 2 : 8 }]}>
       <View style={[
         styles.chipHeader,
-        { borderColor: isDone ? colors.surfaceLight : colorScheme.color + '40' },
+        { borderColor: isLoading ? colorScheme.color + '40' : isError ? '#d55b5b60' : colors.surfaceLight },
         hasResults && styles.chipHeaderWithResults,
       ]}>
         <View style={[styles.chipIconCircle, { backgroundColor: colorScheme.bg }]}>
-          {isDone ? (
+          {isError ? (
+            <Ionicons name="alert-circle" size={18} color="#d55b5b" />
+          ) : isDone ? (
             <Ionicons name="checkmark-circle" size={18} color={colorScheme.color} />
           ) : (
             <Ionicons name={event.icon as any} size={16} color={colorScheme.color} />
@@ -203,17 +209,17 @@ function ToolEventChip({
         </View>
 
         <View style={styles.chipTextContainer}>
-          <Text style={[styles.chipLabel, isDone && styles.chipLabelDone]}>
+          <Text style={[styles.chipLabel, (isDone || isError) && styles.chipLabelDone]}>
             {event.label}
           </Text>
-          {event.message && isDone ? (
-            <Text style={styles.chipMessage} numberOfLines={1}>
+          {event.message && (isDone || isError) ? (
+            <Text style={[styles.chipMessage, isError && { color: '#d55b5b' }]} numberOfLines={2}>
               {event.message}
             </Text>
           ) : null}
         </View>
 
-        {!isDone && (
+        {isLoading && (
           <ActivityIndicator size="small" color={colorScheme.color} />
         )}
       </View>
