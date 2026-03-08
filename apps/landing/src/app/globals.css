@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* Explicitly tell Tailwind v4 where to scan for utility classes.
+   Path is relative to this CSS file (src/app/globals.css → ../../ = apps/landing/) */
+@source "../..";
+
 /* Literal color tokens — no var() here */
 @theme {
   --color-burgundy: #800020;
