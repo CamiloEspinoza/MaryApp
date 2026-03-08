@@ -23,14 +23,11 @@
 }
 
 /*
-  Base overrides go inside @layer base so they DON'T override Tailwind utilities.
-  Unlayered CSS has higher cascade priority than @layer utilities — never put
-  margin/padding resets outside a layer.
+  All base overrides live inside @layer base so they never override
+  Tailwind utilities (unlayered CSS beats all @layer CSS in cascade).
 */
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
 
   body {
     background-color: #f8f4ed;
@@ -45,19 +42,19 @@
   ::-webkit-scrollbar-thumb { background: #800020; border-radius: 2px; }
 }
 
-/* Keyframes are fine outside layers */
+/* ─── Keyframes ─── */
 @keyframes voice-bar {
   0%, 100% { transform: scaleY(0.3); opacity: 0.4; }
   50%       { transform: scaleY(1);   opacity: 1;   }
 }
 
 @keyframes pulse-ring {
-  0%   { transform: scale(1);   opacity: 0.6; }
-  100% { transform: scale(1.8); opacity: 0;   }
+  0%   { transform: scale(1);   opacity: 0.5; }
+  100% { transform: scale(2);   opacity: 0;   }
 }
 
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(28px); }
+  from { opacity: 0; transform: translateY(32px); }
   to   { opacity: 1; transform: translateY(0);    }
 }
 
@@ -66,15 +63,20 @@
   to   { opacity: 1; }
 }
 
-/* Custom animation utility classes */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─── Animation utilities ─── */
 .animate-fade-up {
   opacity: 0;
-  animation: fade-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .animate-fade-in {
   opacity: 0;
-  animation: fade-in 0.9s ease forwards;
+  animation: fade-in 1s ease forwards;
 }
 
 .delay-100 { animation-delay: 0.1s; }
@@ -85,3 +87,27 @@
 .delay-600 { animation-delay: 0.6s; }
 .delay-700 { animation-delay: 0.7s; }
 .delay-800 { animation-delay: 0.8s; }
+
+/* ─── Grain overlay ─── */
+.grain-overlay {
+  position: relative;
+}
+.grain-overlay::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  opacity: 0.028;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── Marquee ticker ─── */
+.marquee-track {
+  animation: marquee 28s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
