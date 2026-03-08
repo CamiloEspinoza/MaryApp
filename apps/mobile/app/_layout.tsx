@@ -5,6 +5,7 @@ import { View, ActivityIndicator } from 'react-native';
 import { Slot, useRouter, useSegments } from 'expo-router';
 import { ElevenLabsProvider } from '@elevenlabs/react-native';
 import { AuthProvider, useAuth } from '../contexts/AuthContext';
+import { MaryAgentProvider } from '../contexts/MaryAgentContext';
 import { colors } from '../constants/theme';
 
 function AuthGate() {
@@ -46,7 +47,9 @@ export default function RootLayout() {
   return (
     <AuthProvider>
       <ElevenLabsProvider>
-        <AuthGate />
+        <MaryAgentProvider>
+          <AuthGate />
+        </MaryAgentProvider>
       </ElevenLabsProvider>
     </AuthProvider>
   );

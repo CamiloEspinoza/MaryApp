@@ -13,37 +13,41 @@ model User {
   name      String?
   trips     Trip[]
   otps      Otp[]
+  memories  Memory[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Otp {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   code      String
   email     String
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
+  user      User?     @relation(fields: [userId], references: [id])
   expiresAt DateTime
   usedAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   @@index([email, code])
 }
 
 model Trip {
-  id           String        @id @default(cuid())
-  title        String
-  destination  String
-  startDate    DateTime
-  endDate      DateTime?
-  objectives   String?
-  notes        String?
-  status       TripStatus    @default(PLANNING)
-  userId       String
-  user         User          @relation(fields: [userId], references: [id])
-  participants Participant[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id              String           @id @default(cuid())
+  title           String
+  destination     String
+  startDate       DateTime
+  endDate         DateTime?
+  objectives      String?
+  notes           String?
+  status          TripStatus       @default(PLANNING)
+  userId          String
+  user            User             @relation(fields: [userId], references: [id])
+  participants    Participant[]
+  itineraryDays   ItineraryDay[]
+  transportations Transportation[]
+  accommodations  Accommodation[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   @@index([userId])
 }
@@ -58,9 +62,109 @@ model Participant {
   @@index([tripId])
 }
 
+model ItineraryDay {
+  id     String          @id @default(cuid())
+  date   DateTime
+  notes  String?
+  tripId String
+  trip   Trip            @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  items  ItineraryItem[]
+
+  @@unique([tripId, date])
+  @@index([tripId])
+}
+
+model ItineraryItem {
+  id          String            @id @default(cuid())
+  type        ItineraryItemType @default(ACTIVITY)
+  title       String
+  description String?
+  location    String?
+  startTime   DateTime?
+  endTime     DateTime?
+  cost        Float?
+  currency    String?           @default("USD")
+  dayId       String
+  day         ItineraryDay      @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  createdAt   DateTime          @default(now())
+
+  @@index([dayId])
+}
+
+model Transportation {
+  id            String             @id @default(cuid())
+  type          TransportationType @default(FLIGHT)
+  origin        String
+  destination   String
+  carrier       String?
+  flightNumber  String?
+  departureTime DateTime
+  arrivalTime   DateTime
+  cost          Float?
+  currency      String?            @default("USD")
+  bookingRef    String?
+  tripId        String
+  trip          Trip               @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  createdAt     DateTime           @default(now())
+
+  @@index([tripId])
+}
+
+model Accommodation {
+  id             String   @id @default(cuid())
+  name           String
+  address        String?
+  checkIn        DateTime
+  checkOut       DateTime
+  cost           Float?
+  currency       String?  @default("USD")
+  bookingRef     String?
+  amadeusHotelId String?
+  tripId         String
+  trip           Trip     @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+
+  @@index([tripId])
+}
+
 enum TripStatus {
   PLANNING
   ACTIVE
   COMPLETED
   CANCELLED
+}
+
+enum ItineraryItemType {
+  ACTIVITY
+  MEAL
+  VISIT
+  TRANSPORT
+  OTHER
+}
+
+enum TransportationType {
+  FLIGHT
+  TRAIN
+  BUS
+  CAR
+  OTHER
+}
+
+model Memory {
+  id        String                       @id @default(cuid())
+  category  MemoryCategory
+  content   String
+  embedding Unsupported("vector(1536)")?
+  userId    String
+  user      User                         @relation(fields: [userId], references: [id])
+  createdAt DateTime                     @default(now())
+  updatedAt DateTime                     @updatedAt
+
+  @@index([userId])
+}
+
+enum MemoryCategory {
+  PREFERENCE
+  NOTE
+  FACT
 }
