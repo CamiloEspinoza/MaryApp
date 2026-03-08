@@ -476,7 +476,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingBottom: 110,
+    paddingBottom: 32,
+    paddingTop: 8,
     gap: 32,
   },
   sideButton: {

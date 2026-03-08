@@ -64,156 +64,44 @@ function PhoneMockup() {
   return (
     <div
       className="relative mx-auto"
-      style={{ width: 300, filter: "drop-shadow(0 40px 60px rgba(0,0,0,0.18))" }}
+      style={{ width: 280, filter: "drop-shadow(0 32px 52px rgba(0,0,0,0.25))" }}
     >
-      {/* Phone frame */}
+      {/* Phone outer frame */}
       <div
         className="relative overflow-hidden"
         style={{
-          backgroundColor: "#1c0a08",
-          borderRadius: 44,
-          border: "8px solid #2e1a10",
-          height: 600,
+          backgroundColor: "#0a0a0a",
+          borderRadius: 50,
+          border: "10px solid #1a1a1a",
+          boxShadow: "inset 0 0 0 1px #2a2a2a",
         }}
       >
-        {/* Notch */}
+        {/* Dynamic island */}
         <div
           className="absolute top-3 left-1/2 -translate-x-1/2 z-10"
-          style={{ width: 100, height: 28, borderRadius: 16, backgroundColor: "#1c0a08" }}
+          style={{ width: 88, height: 26, borderRadius: 20, backgroundColor: "#0a0a0a" }}
         />
 
-        {/* Screen */}
-        <div className="bg-cream h-full flex flex-col overflow-hidden">
-          {/* Status bar */}
-          <div className="bg-cream pt-6 pb-2 px-5 flex justify-between items-center shrink-0">
-            <span className="text-[11px] text-muted font-medium" style={{ fontFamily: "var(--font-dm-sans)" }}>
-              9:41
-            </span>
-            <div className="flex items-center gap-1">
-              <svg width="14" height="10" viewBox="0 0 14 10" fill="#7a6254">
-                <rect x="0" y="4" width="2" height="6" rx="1" />
-                <rect x="3" y="2" width="2" height="8" rx="1" />
-                <rect x="6" y="0" width="2" height="10" rx="1" />
-                <rect x="9" y="1" width="2" height="9" rx="1" />
-              </svg>
-              <svg width="12" height="10" viewBox="0 0 12 10" fill="#7a6254">
-                <rect x="1" y="2" width="10" height="7" rx="1.5" stroke="#7a6254" strokeWidth="1.2" fill="none" />
-                <rect x="11" y="4" width="1.5" height="3" rx="0.75" fill="#7a6254" />
-                <rect x="2" y="3" width="7" height="5" rx="0.5" fill="#7a6254" />
-              </svg>
-            </div>
-          </div>
-
-          {/* App header */}
-          <div className="bg-burgundy px-5 pt-3 pb-4 shrink-0">
-            <div className="flex items-center gap-2 mb-1">
-              <MaryLogo size={22} light />
-              <span
-                className="text-cream text-sm font-semibold tracking-widest"
-                style={{ fontFamily: "var(--font-cormorant)" }}
-              >
-                MARY
-              </span>
-            </div>
-            <p
-              className="text-cream/60 text-[10px] tracking-wider"
-              style={{ fontFamily: "var(--font-dm-sans)" }}
-            >
-              Tu compañera de viaje
-            </p>
-          </div>
-
-          {/* Chat area */}
-          <div className="flex-1 px-4 py-4 space-y-3 overflow-hidden" style={{ background: "#f8f4ed" }}>
-            {/* Mary message */}
-            <div className="flex gap-2 items-end">
-              <div className="w-6 h-6 rounded-full bg-burgundy flex items-center justify-center shrink-0">
-                <span className="text-cream text-[8px] font-bold" style={{ fontFamily: "var(--font-dm-sans)" }}>M</span>
-              </div>
-              <div
-                className="bg-white rounded-2xl rounded-bl-sm px-3 py-2 shadow-sm max-w-[180px]"
-                style={{ border: "1px solid #f0ebe0" }}
-              >
-                <p className="text-[11px] text-ink leading-relaxed" style={{ fontFamily: "var(--font-dm-sans)" }}>
-                  ¡Hola! Soy Mary 👋 ¿A dónde quieres viajar?
-                </p>
-              </div>
-            </div>
-
-            {/* User message */}
-            <div className="flex justify-end">
-              <div className="bg-burgundy rounded-2xl rounded-br-sm px-3 py-2 max-w-[180px]">
-                <p className="text-[11px] text-cream leading-relaxed" style={{ fontFamily: "var(--font-dm-sans)" }}>
-                  Quiero ir a Lisboa la semana que viene 🇵🇹
-                </p>
-              </div>
-            </div>
-
-            {/* Mary response */}
-            <div className="flex gap-2 items-end">
-              <div className="w-6 h-6 rounded-full bg-burgundy flex items-center justify-center shrink-0">
-                <span className="text-cream text-[8px] font-bold" style={{ fontFamily: "var(--font-dm-sans)" }}>M</span>
-              </div>
-              <div
-                className="bg-white rounded-2xl rounded-bl-sm px-3 py-2 shadow-sm max-w-[190px]"
-                style={{ border: "1px solid #f0ebe0" }}
-              >
-                <p className="text-[11px] text-ink leading-relaxed" style={{ fontFamily: "var(--font-dm-sans)" }}>
-                  ¡Qué buena elección! Encontré vuelos desde €89. ¿Necesitas hotel con acceso accesible?
-                </p>
-              </div>
-            </div>
-
-            {/* Suggestion card */}
-            <div
-              className="bg-white rounded-2xl p-3 shadow-sm"
-              style={{ border: "1px solid #f0ebe0" }}
-            >
-              <p className="text-[9px] text-muted uppercase tracking-wider mb-1.5" style={{ fontFamily: "var(--font-dm-sans)" }}>
-                Vuelo recomendado
-              </p>
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-[12px] font-semibold text-ink" style={{ fontFamily: "var(--font-dm-sans)" }}>
-                    MAD → LIS
-                  </p>
-                  <p className="text-[10px] text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>
-                    Iberia · 1h 50m directo
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[14px] font-bold text-burgundy" style={{ fontFamily: "var(--font-dm-sans)" }}>
-                    €89
-                  </p>
-                  <p className="text-[9px] text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>por persona</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Voice input bar */}
-          <div
-            className="px-4 py-3 bg-white shrink-0 flex items-center gap-3"
-            style={{ borderTop: "1px solid #f0ebe0" }}
-          >
-            <div className="flex-1 bg-cream rounded-full px-4 py-2">
-              <p className="text-[10px] text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>
-                Habla con Mary...
-              </p>
-            </div>
-            <div className="w-9 h-9 bg-burgundy rounded-full flex items-center justify-center shadow-md relative">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                <path d="M12 1c-2.21 0-4 1.79-4 4v6c0 2.21 1.79 4 4 4s4-1.79 4-4V5c0-2.21-1.79-4-4-4zm6 10c0 3.31-2.69 6-6 6s-6-2.69-6-6H4c0 3.92 2.85 7.16 6.6 7.76V21h2.8v-2.24C17.15 18.16 20 14.92 20 11h-2z" />
-              </svg>
-              <div
-                className="absolute inset-0 rounded-full bg-burgundy opacity-30"
-                style={{ animation: "pulse-ring 1.8s ease-out infinite" }}
-              />
-            </div>
-          </div>
-        </div>
+        {/* Real app screenshot */}
+        <Image
+          src="/app-screenshot.png"
+          alt="Mary app en acción — guía turística con voz"
+          width={280}
+          height={560}
+          className="w-full block"
+          style={{ borderRadius: 40, display: "block" }}
+          priority
+        />
       </div>
 
+      {/* Reflection shine */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          borderRadius: 50,
+          background: "linear-gradient(135deg, rgba(255,255,255,0.07) 0%, transparent 45%)",
+        }}
+      />
     </div>
   );
 }
