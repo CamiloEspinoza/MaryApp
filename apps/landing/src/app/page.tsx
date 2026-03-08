@@ -1,7 +1,14 @@
 import Image from "next/image";
 
 /* ─── Logo SVG ─── */
-function MaryLogo({ size = 48 }: { size?: number }) {
+function MaryLogo({
+  size = 48,
+  light = false,
+}: {
+  size?: number;
+  light?: boolean;
+}) {
+  const color = light ? "#f8f4ed" : "#800020";
   return (
     <svg
       width={size}
@@ -11,20 +18,13 @@ function MaryLogo({ size = 48 }: { size?: number }) {
       xmlns="http://www.w3.org/2000/svg"
       aria-label="Mary logo"
     >
-      {/* Heart at top center */}
-      <path
-        d="M40 14c0 0-6-7-12-4s-6 10 0 14l12 10 12-10c6-4 6-11 0-14s-12 4-12 4z"
-        fill="#800020"
-        opacity="0.15"
-      />
       <path
         d="M40 16c0 0-4-5-8-3s-4 7 0 10l8 6.5 8-6.5c4-3 4-7.5 0-10s-8 3-8 3z"
-        fill="#800020"
+        fill={color}
       />
-      {/* M legs */}
       <path
         d="M6 62 L6 30 L40 54 L74 30 L74 62"
-        stroke="#800020"
+        stroke={color}
         strokeWidth="6"
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -34,26 +34,220 @@ function MaryLogo({ size = 48 }: { size?: number }) {
   );
 }
 
-/* ─── Voice Waveform ─── */
-function VoiceWave({ className = "" }: { className?: string }) {
-  const bars = [14, 26, 38, 52, 38, 26, 14, 22, 44, 22];
+/* ─── Voice Bars ─── */
+function VoiceBars({ light = false }: { light?: boolean }) {
+  const color = light ? "#f8f4ed" : "#800020";
+  const heights = [10, 18, 28, 36, 28, 18, 10, 22, 36, 22];
   const delays = [0, 0.1, 0.2, 0.3, 0.4, 0.3, 0.2, 0.15, 0.25, 0.1];
   return (
-    <div className={`flex items-center gap-[3px] ${className}`}>
-      {bars.map((h, i) => (
+    <div className="flex items-center gap-[3px]" style={{ height: 40 }}>
+      {heights.map((h, i) => (
         <span
           key={i}
           style={{
             display: "inline-block",
             width: "3px",
             height: `${h}px`,
-            backgroundColor: "#800020",
+            backgroundColor: color,
             borderRadius: "2px",
             animation: `voice-bar 1.4s ease-in-out ${delays[i]}s infinite`,
-            transformOrigin: "center bottom",
+            transformOrigin: "center",
           }}
         />
       ))}
+    </div>
+  );
+}
+
+/* ─── Phone Mockup ─── */
+function PhoneMockup() {
+  return (
+    <div
+      className="relative mx-auto"
+      style={{ width: 300, filter: "drop-shadow(0 40px 60px rgba(0,0,0,0.18))" }}
+    >
+      {/* Phone frame */}
+      <div
+        className="relative bg-text overflow-hidden"
+        style={{
+          borderRadius: 44,
+          border: "8px solid #2e1a10",
+          height: 600,
+        }}
+      >
+        {/* Notch */}
+        <div
+          className="absolute top-3 left-1/2 -translate-x-1/2 bg-text z-10"
+          style={{ width: 100, height: 28, borderRadius: 16 }}
+        />
+
+        {/* Screen */}
+        <div className="bg-cream h-full flex flex-col overflow-hidden">
+          {/* Status bar */}
+          <div className="bg-cream pt-6 pb-2 px-5 flex justify-between items-center shrink-0">
+            <span className="text-[11px] text-text-muted font-medium" style={{ fontFamily: "var(--font-dm-sans)" }}>
+              9:41
+            </span>
+            <div className="flex items-center gap-1">
+              <svg width="14" height="10" viewBox="0 0 14 10" fill="#7a6254">
+                <rect x="0" y="4" width="2" height="6" rx="1" />
+                <rect x="3" y="2" width="2" height="8" rx="1" />
+                <rect x="6" y="0" width="2" height="10" rx="1" />
+                <rect x="9" y="1" width="2" height="9" rx="1" />
+              </svg>
+              <svg width="12" height="10" viewBox="0 0 12 10" fill="#7a6254">
+                <rect x="1" y="2" width="10" height="7" rx="1.5" stroke="#7a6254" strokeWidth="1.2" fill="none" />
+                <rect x="11" y="4" width="1.5" height="3" rx="0.75" fill="#7a6254" />
+                <rect x="2" y="3" width="7" height="5" rx="0.5" fill="#7a6254" />
+              </svg>
+            </div>
+          </div>
+
+          {/* App header */}
+          <div className="bg-burgundy px-5 pt-3 pb-4 shrink-0">
+            <div className="flex items-center gap-2 mb-1">
+              <MaryLogo size={22} light />
+              <span
+                className="text-cream text-sm font-semibold tracking-widest"
+                style={{ fontFamily: "var(--font-cormorant)" }}
+              >
+                MARY
+              </span>
+            </div>
+            <p
+              className="text-cream/60 text-[10px] tracking-wider"
+              style={{ fontFamily: "var(--font-dm-sans)" }}
+            >
+              Tu compañera de viaje
+            </p>
+          </div>
+
+          {/* Chat area */}
+          <div className="flex-1 px-4 py-4 space-y-3 overflow-hidden" style={{ background: "#f8f4ed" }}>
+            {/* Mary message */}
+            <div className="flex gap-2 items-end">
+              <div className="w-6 h-6 rounded-full bg-burgundy flex items-center justify-center shrink-0">
+                <span className="text-cream text-[8px] font-bold" style={{ fontFamily: "var(--font-dm-sans)" }}>M</span>
+              </div>
+              <div
+                className="bg-white rounded-2xl rounded-bl-sm px-3 py-2 shadow-sm max-w-[180px]"
+                style={{ border: "1px solid #f0ebe0" }}
+              >
+                <p className="text-[11px] text-text leading-relaxed" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                  ¡Hola! Soy Mary 👋 ¿A dónde quieres viajar?
+                </p>
+              </div>
+            </div>
+
+            {/* User message */}
+            <div className="flex justify-end">
+              <div className="bg-burgundy rounded-2xl rounded-br-sm px-3 py-2 max-w-[180px]">
+                <p className="text-[11px] text-cream leading-relaxed" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                  Quiero ir a Lisboa la semana que viene 🇵🇹
+                </p>
+              </div>
+            </div>
+
+            {/* Mary response */}
+            <div className="flex gap-2 items-end">
+              <div className="w-6 h-6 rounded-full bg-burgundy flex items-center justify-center shrink-0">
+                <span className="text-cream text-[8px] font-bold" style={{ fontFamily: "var(--font-dm-sans)" }}>M</span>
+              </div>
+              <div
+                className="bg-white rounded-2xl rounded-bl-sm px-3 py-2 shadow-sm max-w-[190px]"
+                style={{ border: "1px solid #f0ebe0" }}
+              >
+                <p className="text-[11px] text-text leading-relaxed" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                  ¡Qué buena elección! Encontré vuelos desde €89. ¿Necesitas hotel con acceso accesible?
+                </p>
+              </div>
+            </div>
+
+            {/* Suggestion card */}
+            <div
+              className="bg-white rounded-2xl p-3 shadow-sm"
+              style={{ border: "1px solid #f0ebe0" }}
+            >
+              <p className="text-[9px] text-text-muted uppercase tracking-wider mb-1.5" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                Vuelo recomendado
+              </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[12px] font-semibold text-text" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                    MAD → LIS
+                  </p>
+                  <p className="text-[10px] text-text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                    Iberia · 1h 50m directo
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[14px] font-bold text-burgundy" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                    €89
+                  </p>
+                  <p className="text-[9px] text-text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>por persona</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Voice input bar */}
+          <div
+            className="px-4 py-3 bg-white shrink-0 flex items-center gap-3"
+            style={{ borderTop: "1px solid #f0ebe0" }}
+          >
+            <div className="flex-1 bg-cream rounded-full px-4 py-2">
+              <p className="text-[10px] text-text-muted" style={{ fontFamily: "var(--font-dm-sans)" }}>
+                Habla con Mary...
+              </p>
+            </div>
+            <div className="w-9 h-9 bg-burgundy rounded-full flex items-center justify-center shadow-md relative">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+                <path d="M12 1c-2.21 0-4 1.79-4 4v6c0 2.21 1.79 4 4 4s4-1.79 4-4V5c0-2.21-1.79-4-4-4zm6 10c0 3.31-2.69 6-6 6s-6-2.69-6-6H4c0 3.92 2.85 7.16 6.6 7.76V21h2.8v-2.24C17.15 18.16 20 14.92 20 11h-2z" />
+              </svg>
+              <div
+                className="absolute inset-0 rounded-full bg-burgundy opacity-30"
+                style={{ animation: "pulse-ring 1.8s ease-out infinite" }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating card — accessibility */}
+      <div
+        className="absolute -left-16 top-36 bg-white rounded-2xl shadow-xl px-4 py-3 border border-cream-border"
+        style={{ minWidth: 160 }}
+      >
+        <p className="text-[9px] text-text-muted uppercase tracking-wider mb-1" style={{ fontFamily: "var(--font-dm-sans)" }}>
+          Accesibilidad
+        </p>
+        <div className="flex items-center gap-2">
+          <span className="text-base">♿</span>
+          <p className="text-[11px] font-semibold text-text" style={{ fontFamily: "var(--font-dm-sans)" }}>
+            Sin escaleras ✓
+          </p>
+        </div>
+      </div>
+
+      {/* Floating card — destination rating */}
+      <div
+        className="absolute -right-12 bottom-32 bg-white rounded-2xl shadow-xl px-4 py-3 border border-cream-border"
+        style={{ minWidth: 140 }}
+      >
+        <p className="text-[9px] text-text-muted mb-1" style={{ fontFamily: "var(--font-dm-sans)" }}>
+          🗼 Lisboa, Portugal
+        </p>
+        <div className="flex items-center gap-0.5">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <svg key={i} width="9" height="9" viewBox="0 0 10 10" fill="#800020">
+              <path d="M5 0l1.12 3.44H9.76L6.82 5.57l1.09 3.43L5 6.85 2.09 9 3.18 5.57.24 3.44H3.88z" />
+            </svg>
+          ))}
+          <span className="text-[9px] text-text-muted ml-1" style={{ fontFamily: "var(--font-dm-sans)" }}>
+            4.9
+          </span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -64,16 +258,16 @@ function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-cream/90 backdrop-blur-md border-b border-cream-border">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <MaryLogo size={36} />
+          <MaryLogo size={32} />
           <div>
             <span
-              className="font-display text-xl font-semibold tracking-[0.12em] text-burgundy"
+              className="font-display text-lg font-semibold tracking-[0.14em] text-burgundy leading-none block"
               style={{ fontFamily: "var(--font-cormorant)" }}
             >
               MARY
             </span>
             <p
-              className="text-[8px] tracking-[0.2em] text-text-muted font-sans uppercase -mt-0.5"
+              className="text-[8px] tracking-[0.18em] text-text-muted uppercase leading-none mt-0.5"
               style={{ fontFamily: "var(--font-dm-sans)" }}
             >
               Tu compañera de viaje
@@ -97,16 +291,15 @@ function Navbar() {
           </a>
           <a
             href="#descargar"
-            className="px-5 py-2 bg-burgundy text-cream text-sm rounded-full hover:bg-burgundy-hover transition-colors"
+            className="px-5 py-2 bg-burgundy text-cream text-sm rounded-full hover:bg-burgundy-hover transition-colors font-medium"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
             Descargar app
           </a>
         </div>
-        {/* Mobile CTA */}
         <a
           href="#descargar"
-          className="md:hidden px-4 py-1.5 bg-burgundy text-cream text-sm rounded-full"
+          className="md:hidden px-4 py-1.5 bg-burgundy text-cream text-sm rounded-full font-medium"
           style={{ fontFamily: "var(--font-dm-sans)" }}
         >
           Descargar
@@ -119,33 +312,24 @@ function Navbar() {
 /* ─── Hero ─── */
 function Hero() {
   return (
-    <section className="pt-16 min-h-screen bg-cream relative overflow-hidden">
-      {/* Background circles */}
+    <section className="pt-16 bg-cream overflow-hidden">
+      {/* Subtle radial bg */}
       <div
-        className="absolute top-20 right-0 w-[600px] h-[600px] rounded-full opacity-20"
+        className="absolute top-0 right-0 w-[700px] h-[700px] pointer-events-none"
         style={{
-          background:
-            "radial-gradient(circle, #c19a9b 0%, transparent 70%)",
-          transform: "translate(30%, -10%)",
-        }}
-      />
-      <div
-        className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full opacity-10"
-        style={{
-          background: "radial-gradient(circle, #800020 0%, transparent 70%)",
-          transform: "translate(-30%, 30%)",
+          background: "radial-gradient(ellipse at 80% 20%, rgba(193,154,155,0.18) 0%, transparent 65%)",
         }}
       />
 
-      <div className="max-w-6xl mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-6 items-center min-h-[calc(100vh-64px)] py-16">
+      <div className="max-w-6xl mx-auto px-6 relative">
+        <div className="grid lg:grid-cols-2 gap-16 items-center py-20 lg:py-28">
           {/* Left — copy */}
-          <div className="flex flex-col justify-center">
-            {/* Badge */}
-            <div className="animate-fade-up inline-flex items-center gap-2 mb-6 self-start">
-              <VoiceWave />
+          <div className="flex flex-col">
+            {/* Label */}
+            <div className="animate-fade-up flex items-center gap-3 mb-8 self-start">
+              <VoiceBars />
               <span
-                className="text-xs tracking-[0.18em] text-burgundy uppercase font-medium"
+                className="text-[11px] tracking-[0.2em] text-burgundy uppercase font-medium"
                 style={{ fontFamily: "var(--font-dm-sans)" }}
               >
                 Activada por voz · IA
@@ -154,170 +338,74 @@ function Hero() {
 
             {/* Headline */}
             <h1
-              className="animate-fade-up delay-100 font-display text-5xl sm:text-6xl lg:text-7xl font-semibold leading-[1.05] text-text mb-6"
+              className="animate-fade-up delay-100 text-[clamp(3rem,6vw,5rem)] font-semibold leading-[1.08] text-text mb-6"
               style={{ fontFamily: "var(--font-cormorant)" }}
             >
               ¿Lista para tu
               <br />
-              <em className="text-burgundy not-italic">próximo</em>
+              <span className="text-burgundy italic">próximo</span>
               <br />
               viaje?
             </h1>
 
-            {/* Sub */}
+            {/* Description */}
             <p
-              className="animate-fade-up delay-200 text-base sm:text-lg text-text-muted leading-relaxed mb-8 max-w-md"
+              className="animate-fade-up delay-200 text-[15px] text-text-muted leading-[1.8] mb-8 max-w-[420px]"
               style={{ fontFamily: "var(--font-dm-sans)" }}
             >
               Conoce a Mary, tu asistente personal de IA. Ella se encarga de
               los detalles{" "}
-              <span className="text-text font-medium">
+              <strong className="text-text font-medium">
                 (vuelos, accesibilidad, rutas sin escaleras)
-              </span>{" "}
+              </strong>{" "}
               para que tú solo disfrutes.
             </p>
 
-            {/* CTA buttons */}
-            <div className="animate-fade-up delay-300 flex flex-col sm:flex-row gap-3">
+            {/* CTAs */}
+            <div className="animate-fade-up delay-300 flex flex-wrap gap-3 mb-10">
               <a
                 href="#descargar"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-burgundy text-cream rounded-full text-sm font-medium hover:bg-burgundy-hover transition-all hover:shadow-lg hover:shadow-[#80002030] hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2.5 px-6 py-3 bg-burgundy text-cream rounded-full text-sm font-medium hover:bg-burgundy-hover transition-all hover:shadow-lg hover:-translate-y-0.5"
                 style={{ fontFamily: "var(--font-dm-sans)" }}
               >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06C18.95 10 18.2 12.77 19 14.62c.8 1.85 2.29 2.24 2.29 2.24-.42 1.14-.97 2.24-1.58 2.64zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
                 </svg>
                 App Store
               </a>
               <a
                 href="#descargar"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border-2 border-burgundy text-burgundy rounded-full text-sm font-medium hover:bg-burgundy-light transition-all"
+                className="inline-flex items-center gap-2.5 px-6 py-3 border-2 border-burgundy text-burgundy rounded-full text-sm font-medium hover:bg-burgundy-light transition-all"
                 style={{ fontFamily: "var(--font-dm-sans)" }}
               >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M3.18 23.76c.33.18.7.24 1.07.17l12.94-7.48-2.93-2.93-11.08 10.24zm16.93-11.09L17.4 11.2 14.2 14.4l2.93 2.93 2.97-1.71c.85-.49.85-1.86.01-2.95zM.97.47C.67.8.5 1.3.5 1.95v20.1c0 .65.17 1.15.47 1.48l.08.07L12.3 12.35v-.26L1.05.4l-.08.07zm11.6 11.35L3.18.47c.33-.18.7-.24 1.07-.17l12.94 7.48-2.99 2.93-2.63-.89z" />
                 </svg>
                 Google Play
               </a>
             </div>
 
-            {/* Social proof mini */}
+            {/* Stats */}
             <div
-              className="animate-fade-up delay-400 flex items-center gap-4 mt-8 pt-8 border-t border-cream-border"
+              className="animate-fade-up delay-400 flex items-center gap-6 pt-8 border-t border-cream-border"
               style={{ fontFamily: "var(--font-dm-sans)" }}
             >
               {[
-                { n: "10k+", label: "viajeras activas" },
-                { n: "4.9★", label: "valoración media" },
-                { n: "50+", label: "destinos" },
+                { n: "10k+", label: "Viajeras activas" },
+                { n: "4.9★", label: "Valoración media" },
+                { n: "50+", label: "Destinos" },
               ].map((s) => (
-                <div key={s.n} className="text-center flex-1">
+                <div key={s.n}>
                   <p className="text-xl font-semibold text-burgundy">{s.n}</p>
-                  <p className="text-[11px] text-text-muted uppercase tracking-wider">
-                    {s.label}
-                  </p>
+                  <p className="text-[11px] text-text-muted">{s.label}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right — hero image */}
-          <div className="animate-fade-in delay-200 relative flex justify-center lg:justify-end">
-            {/* Decorative ring */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div
-                className="w-[380px] h-[380px] rounded-full border-2 border-rose opacity-30"
-                style={{ animation: "pulse-ring 3s ease-out infinite" }}
-              />
-            </div>
-
-            {/* Photo card */}
-            <div className="relative w-[300px] sm:w-[360px] lg:w-[420px]">
-              <div className="rounded-4xl overflow-hidden shadow-2xl shadow-[#80002020] border-4 border-white">
-                <Image
-                  src="/hero.jpeg"
-                  alt="Mujer viajera usando Mary en un café europeo"
-                  width={420}
-                  height={580}
-                  className="w-full object-cover object-top"
-                  style={{ height: "520px" }}
-                  priority
-                />
-              </div>
-
-              {/* Floating card — voice active */}
-              <div className="absolute -left-8 bottom-20 bg-white rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 border border-cream-alt">
-                <div className="relative">
-                  <div className="w-9 h-9 bg-burgundy rounded-full flex items-center justify-center">
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="white"
-                    >
-                      <path d="M12 1c-2.21 0-4 1.79-4 4v6c0 2.21 1.79 4 4 4s4-1.79 4-4V5c0-2.21-1.79-4-4-4zm6 10c0 3.31-2.69 6-6 6s-6-2.69-6-6H4c0 3.92 2.85 7.16 6.6 7.76V21h2.8v-2.24C17.15 18.16 20 14.92 20 11h-2z" />
-                    </svg>
-                  </div>
-                  <div
-                    className="absolute -inset-1 rounded-full bg-burgundy opacity-30"
-                    style={{
-                      animation: "pulse-ring 1.5s ease-out infinite",
-                    }}
-                  />
-                </div>
-                <div style={{ fontFamily: "var(--font-dm-sans)" }}>
-                  <p className="text-[11px] text-text-muted">Mary está escuchando</p>
-                  <p className="text-xs font-semibold text-text">
-                    &ldquo;¿Hay escaleras?&rdquo;
-                  </p>
-                </div>
-              </div>
-
-              {/* Floating card — destination */}
-              <div className="absolute -right-4 top-16 bg-white rounded-2xl shadow-xl px-4 py-3 border border-cream-alt">
-                <p
-                  className="text-[10px] text-text-muted mb-0.5"
-                  style={{ fontFamily: "var(--font-dm-sans)" }}
-                >
-                  Destino sugerido
-                </p>
-                <p
-                  className="text-sm font-semibold text-text"
-                  style={{ fontFamily: "var(--font-dm-sans)" }}
-                >
-                  🗼 París, Francia
-                </p>
-                <div className="flex items-center gap-1 mt-1">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <svg
-                      key={i}
-                      width="10"
-                      height="10"
-                      viewBox="0 0 10 10"
-                      fill="#800020"
-                    >
-                      <path d="M5 0l1.12 3.44H9.76L6.82 5.57l1.09 3.43L5 6.85 2.09 9 3.18 5.57.24 3.44H3.88z" />
-                    </svg>
-                  ))}
-                  <span
-                    className="text-[10px] text-text-muted ml-1"
-                    style={{ fontFamily: "var(--font-dm-sans)" }}
-                  >
-                    4.9
-                  </span>
-                </div>
-              </div>
-            </div>
+          {/* Right — phone mockup */}
+          <div className="animate-fade-in delay-300 flex justify-center lg:justify-end pr-0 lg:pr-8">
+            <PhoneMockup />
           </div>
         </div>
       </div>
@@ -331,77 +419,64 @@ function Features() {
     {
       icon: "✈️",
       title: "Vuelos y logística",
-      desc: "Mary busca y compara vuelos, trenes y transportes adaptados a tus necesidades. Sin estrés, sin pantallas confusas.",
+      desc: "Busca y compara vuelos, trenes y transportes adaptados a ti. Sin pantallas confusas.",
     },
     {
       icon: "♿",
       title: "Accesibilidad total",
-      desc: "Rutas sin escaleras, hoteles con acceso adaptado, restaurantes con rampas. Mary no olvida ningún detalle.",
+      desc: "Rutas sin escaleras, hoteles adaptados, restaurantes con rampas. Ningún detalle olvidado.",
     },
     {
       icon: "🗺️",
       title: "Tu guía local",
-      desc: "Descubre rincones secretos, historias del lugar y recomendaciones personalizadas para tu estilo de viaje.",
+      desc: "Rincones secretos, historias del lugar y recomendaciones personalizadas para tu estilo.",
     },
     {
       icon: "🎙️",
       title: "Solo habla con ella",
-      desc: "Sin formularios ni botones. Dile a Mary lo que necesitas con tu voz y ella lo resuelve en segundos.",
+      desc: "Sin formularios ni botones. Dile a Mary lo que necesitas y ella lo resuelve en segundos.",
     },
     {
       icon: "🧠",
       title: "Aprende de ti",
-      desc: "Mary recuerda tus preferencias, el ritmo que te gusta y lo que disfrutas. Cada viaje es más fácil que el anterior.",
+      desc: "Mary recuerda tus preferencias y el ritmo que te gusta. Cada viaje es más fácil.",
     },
     {
       icon: "🌍",
       title: "50+ destinos",
-      desc: "De Roma a Buenos Aires, de Tokio a Sevilla. Mary te acompaña con la misma calidez en cualquier rincón del mundo.",
+      desc: "De Roma a Buenos Aires, de Tokio a Sevilla. Mary te acompaña en cualquier rincón.",
     },
   ];
 
   return (
-    <section
-      id="funcionalidades"
-      className="py-24 bg-cream-alt"
-    >
+    <section id="funcionalidades" className="py-24 bg-cream-alt">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <div className="text-center mb-14">
           <p
-            className="text-xs tracking-[0.25em] text-burgundy uppercase mb-3"
+            className="text-[11px] tracking-[0.25em] text-burgundy uppercase mb-3 font-medium"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
             Funcionalidades
           </p>
           <h2
-            className="font-display text-4xl sm:text-5xl font-semibold text-text mb-4"
+            className="text-[clamp(2rem,4vw,3.25rem)] font-semibold text-text leading-tight"
             style={{ fontFamily: "var(--font-cormorant)" }}
           >
             Todo lo que Mary hace
             <br />
-            <em className="text-burgundy">por ti</em>
+            <span className="text-burgundy italic">por ti</span>
           </h2>
-          <p
-            className="text-text-muted max-w-md mx-auto text-base leading-relaxed"
-            style={{ fontFamily: "var(--font-dm-sans)" }}
-          >
-            Diseñada para que tú te concentres en vivir la experiencia,
-            mientras ella resuelve los imprevistos.
-          </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((f, i) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {features.map((f) => (
             <div
               key={f.title}
-              className="bg-cream rounded-2xl p-7 border border-cream-border hover:shadow-lg hover:shadow-[#80002012] hover:-translate-y-1 transition-all duration-300"
-              style={{
-                animationDelay: `${i * 0.08}s`,
-              }}
+              className="bg-cream rounded-2xl p-6 border border-cream-border hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
             >
-              <div className="text-3xl mb-4">{f.icon}</div>
+              <div className="text-2xl mb-3">{f.icon}</div>
               <h3
-                className="font-display text-xl font-semibold text-text mb-2"
+                className="text-xl font-semibold text-text mb-2"
                 style={{ fontFamily: "var(--font-cormorant)" }}
               >
                 {f.title}
@@ -427,69 +502,64 @@ function HowItWorks() {
       num: "01",
       title: "Descarga Mary",
       desc: "Disponible en iOS y Android. Crea tu perfil en menos de 2 minutos.",
+      emoji: "📱",
     },
     {
       num: "02",
       title: "Cuéntale tu viaje",
-      desc: 'Dile a dónde quieres ir y qué necesitas. "Mary, me voy una semana a Lisboa, me cuesta caminar mucho."',
+      desc: '"Me voy una semana a Lisboa. Me cuesta caminar mucho y quiero rutas accesibles."',
+      emoji: "🎙️",
     },
     {
       num: "03",
       title: "Disfruta sin preocupaciones",
-      desc: "Mary organiza todo: transporte, rutas, alojamiento y guía local adaptados a ti.",
+      desc: "Mary organiza todo: vuelos, rutas, alojamiento y guía local adaptados a ti.",
+      emoji: "🌍",
     },
   ];
 
   return (
-    <section
-      id="como-funciona"
-      className="py-24 bg-cream relative overflow-hidden"
-    >
-      {/* Decorative line */}
-      <div className="absolute left-1/2 top-32 bottom-32 w-px bg-cream-border hidden lg:block" />
-
+    <section id="como-funciona" className="py-24 bg-cream">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-16">
+        <div className="text-center mb-14">
           <p
-            className="text-xs tracking-[0.25em] text-burgundy uppercase mb-3"
+            className="text-[11px] tracking-[0.25em] text-burgundy uppercase mb-3 font-medium"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
             Cómo funciona
           </p>
           <h2
-            className="font-display text-4xl sm:text-5xl font-semibold text-text"
+            className="text-[clamp(2rem,4vw,3.25rem)] font-semibold text-text leading-tight"
             style={{ fontFamily: "var(--font-cormorant)" }}
           >
             Tres pasos para
             <br />
-            <em className="text-burgundy">viajar diferente</em>
+            <span className="text-burgundy italic">viajar diferente</span>
           </h2>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+        <div className="grid lg:grid-cols-3 gap-8">
           {steps.map((step, i) => (
             <div key={step.num} className="relative">
-              {/* Connector line for mobile */}
+              {/* Connector */}
               {i < steps.length - 1 && (
-                <div className="absolute left-7 top-14 bottom-0 w-px bg-cream-border lg:hidden" />
+                <div className="absolute top-7 left-14 right-0 h-px bg-cream-border hidden lg:block" />
               )}
-
               <div className="flex lg:flex-col gap-5">
-                {/* Number bubble */}
-                <div className="shrink-0 relative">
-                  <div className="w-14 h-14 rounded-full bg-burgundy flex items-center justify-center shadow-lg shadow-[#80002030]">
-                    <span
-                      className="text-cream text-xs font-bold tracking-wider"
-                      style={{ fontFamily: "var(--font-dm-sans)" }}
-                    >
-                      {step.num}
-                    </span>
+                <div className="shrink-0 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-full bg-burgundy shadow-lg flex flex-col items-center justify-center gap-0">
+                    <span className="text-lg">{step.emoji}</span>
                   </div>
                 </div>
-
-                <div className="pt-1 lg:pt-0">
+                <div>
+                  <p
+                    className="text-[11px] tracking-[0.18em] text-burgundy/60 uppercase mb-1 font-medium"
+                    style={{ fontFamily: "var(--font-dm-sans)" }}
+                  >
+                    {step.num}
+                  </p>
                   <h3
-                    className="font-display text-2xl font-semibold text-text mb-2"
+                    className="text-2xl font-semibold text-text mb-2"
                     style={{ fontFamily: "var(--font-cormorant)" }}
                   >
                     {step.title}
@@ -510,26 +580,26 @@ function HowItWorks() {
   );
 }
 
-/* ─── Testimonials ─── */
+/* ─── Social proof ─── */
 function Testimonials() {
   const testimonials = [
     {
       quote:
-        "Mary me ayudó a planear un viaje a Roma en sólo una conversación. Encontró hoteles con ascensor y restaurantes accesibles. ¡Increíble!",
+        "Mary me ayudó a planear Roma en una sola conversación. Encontró hoteles con ascensor y restaurantes con rampas. ¡Increíble!",
       name: "Carmen R.",
       location: "Madrid",
       avatar: "C",
     },
     {
       quote:
-        "Viajo sola desde hace años y siempre tenía miedo a los imprevistos. Con Mary me siento acompañada. Es como tener una amiga que lo sabe todo.",
+        "Viajo sola desde hace años. Con Mary me siento acompañada. Es como tener una amiga que lo sabe todo sobre cada destino.",
       name: "Ana M.",
       location: "Barcelona",
       avatar: "A",
     },
     {
       quote:
-        "Le pregunté sobre rutas sin escaleras en Japón. En segundos tenía un itinerario completo. No puedo creer que sea tan sencillo.",
+        "Le pregunté rutas sin escaleras en Japón. En segundos tenía un itinerario completo. No puedo creer que sea tan sencillo.",
       name: "Lucía P.",
       location: "Buenos Aires",
       avatar: "L",
@@ -541,42 +611,41 @@ function Testimonials() {
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center mb-14">
           <p
-            className="text-xs tracking-[0.25em] text-burgundy uppercase mb-3"
+            className="text-[11px] tracking-[0.25em] text-burgundy uppercase mb-3 font-medium"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
             Historias reales
           </p>
           <h2
-            className="font-display text-4xl sm:text-5xl font-semibold text-text"
+            className="text-[clamp(2rem,4vw,3.25rem)] font-semibold text-text leading-tight"
             style={{ fontFamily: "var(--font-cormorant)" }}
           >
             Lo que dicen nuestras
             <br />
-            <em className="text-burgundy">compañeras de viaje</em>
+            <span className="text-burgundy italic">compañeras de viaje</span>
           </h2>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {testimonials.map((t) => (
             <div
               key={t.name}
-              className="bg-cream rounded-2xl p-7 border border-cream-border flex flex-col gap-5"
+              className="bg-cream rounded-2xl p-6 border border-cream-border flex flex-col gap-4"
             >
-              {/* Quote mark */}
               <span
-                className="font-display text-6xl text-rose leading-none -mb-2"
+                className="text-5xl text-rose leading-none font-display"
                 style={{ fontFamily: "var(--font-cormorant)" }}
               >
                 &ldquo;
               </span>
               <p
-                className="text-sm text-text leading-relaxed flex-1"
+                className="text-sm text-text leading-[1.75] flex-1"
                 style={{ fontFamily: "var(--font-dm-sans)" }}
               >
                 {t.quote}
               </p>
-              <div className="flex items-center gap-3 pt-2 border-t border-cream-border">
-                <div className="w-9 h-9 rounded-full bg-burgundy flex items-center justify-center text-cream text-sm font-semibold">
+              <div className="flex items-center gap-3 pt-3 border-t border-cream-border">
+                <div className="w-8 h-8 rounded-full bg-burgundy flex items-center justify-center text-cream text-sm font-semibold shrink-0">
                   {t.avatar}
                 </div>
                 <div style={{ fontFamily: "var(--font-dm-sans)" }}>
@@ -595,25 +664,21 @@ function Testimonials() {
 /* ─── Download CTA ─── */
 function DownloadCTA() {
   return (
-    <section
-      id="descargar"
-      className="py-24 bg-burgundy relative overflow-hidden"
-    >
-      {/* Background texture */}
+    <section id="descargar" className="py-24 bg-burgundy relative overflow-hidden">
       <div
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 20% 50%, #fff 0%, transparent 50%), radial-gradient(circle at 80% 20%, #c19a9b 0%, transparent 50%)",
+            "radial-gradient(ellipse at 15% 50%, rgba(255,255,255,0.6) 0%, transparent 50%), radial-gradient(ellipse at 85% 20%, rgba(193,154,155,0.8) 0%, transparent 50%)",
         }}
       />
 
       <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
         <div className="flex justify-center mb-6">
-          <MaryLogo size={56} />
+          <MaryLogo size={52} light />
         </div>
         <h2
-          className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold text-cream mb-4"
+          className="text-[clamp(2.2rem,5vw,4rem)] font-semibold text-cream leading-tight mb-4"
           style={{ fontFamily: "var(--font-cormorant)" }}
         >
           Tu próximo viaje
@@ -621,30 +686,30 @@ function DownloadCTA() {
           <em>empieza aquí</em>
         </h2>
         <p
-          className="text-rose text-base mb-10 max-w-md mx-auto leading-relaxed"
+          className="text-rose text-[15px] mb-10 max-w-sm mx-auto leading-relaxed"
           style={{ fontFamily: "var(--font-dm-sans)" }}
         >
-          Descarga Mary gratis y empieza a planear tu aventura. Sin tarjeta de
-          crédito. Sin complicaciones.
+          Descarga Mary gratis y empieza a planear tu aventura.
+          Sin tarjeta de crédito. Sin complicaciones.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
             href="#"
-            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-cream text-burgundy rounded-full text-sm font-semibold hover:bg-white transition-all hover:shadow-lg hover:-translate-y-0.5"
+            className="inline-flex items-center justify-center gap-3 px-7 py-3.5 bg-cream text-burgundy rounded-full text-sm font-semibold hover:bg-white transition-all hover:shadow-xl hover:-translate-y-0.5"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98l-.09.06C18.95 10 18.2 12.77 19 14.62c.8 1.85 2.29 2.24 2.29 2.24-.42 1.14-.97 2.24-1.58 2.64zM13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
             </svg>
             Descargar en App Store
           </a>
           <a
             href="#"
-            className="inline-flex items-center justify-center gap-3 px-8 py-4 border-2 border-cream/40 text-cream rounded-full text-sm font-semibold hover:bg-cream/10 transition-all"
+            className="inline-flex items-center justify-center gap-3 px-7 py-3.5 border-2 border-cream/40 text-cream rounded-full text-sm font-semibold hover:bg-cream/10 transition-all"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
               <path d="M3.18 23.76c.33.18.7.24 1.07.17l12.94-7.48-2.93-2.93-11.08 10.24zm16.93-11.09L17.4 11.2 14.2 14.4l2.93 2.93 2.97-1.71c.85-.49.85-1.86.01-2.95zM.97.47C.67.8.5 1.3.5 1.95v20.1c0 .65.17 1.15.47 1.48l.08.07L12.3 12.35v-.26L1.05.4l-.08.07zm11.6 11.35L3.18.47c.33-.18.7-.24 1.07-.17l12.94 7.48-2.99 2.93-2.63-.89z" />
             </svg>
             Disponible en Google Play
@@ -652,7 +717,7 @@ function DownloadCTA() {
         </div>
 
         <p
-          className="mt-8 text-rose/70 text-xs"
+          className="mt-8 text-rose/60 text-xs"
           style={{ fontFamily: "var(--font-dm-sans)" }}
         >
           Disponible pronto · Regístrate para acceso anticipado
@@ -665,23 +730,22 @@ function DownloadCTA() {
 /* ─── Footer ─── */
 function Footer() {
   return (
-    <footer className="bg-text py-12">
+    <footer className="bg-text py-10">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Brand */}
           <div className="flex items-center gap-3">
-            <div className="opacity-80">
-              <MaryLogo size={28} />
+            <div className="opacity-70">
+              <MaryLogo size={26} light />
             </div>
             <div>
               <span
-                className="font-display text-lg font-semibold tracking-[0.12em] text-cream"
+                className="text-base font-semibold tracking-[0.14em] text-cream leading-none block"
                 style={{ fontFamily: "var(--font-cormorant)" }}
               >
                 MARY
               </span>
               <p
-                className="text-[8px] tracking-[0.2em] text-text-muted uppercase"
+                className="text-[8px] tracking-[0.18em] text-text-muted uppercase leading-none mt-0.5"
                 style={{ fontFamily: "var(--font-dm-sans)" }}
               >
                 Tu compañera de viaje
@@ -689,24 +753,17 @@ function Footer() {
             </div>
           </div>
 
-          {/* Links */}
           <nav
             className="flex items-center gap-6 text-xs text-text-muted"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
-            <a href="#" className="hover:text-rose transition-colors">
-              Privacidad
-            </a>
-            <a href="#" className="hover:text-rose transition-colors">
-              Términos
-            </a>
-            <a href="#" className="hover:text-rose transition-colors">
-              Contacto
-            </a>
+            <a href="#" className="hover:text-rose transition-colors">Privacidad</a>
+            <a href="#" className="hover:text-rose transition-colors">Términos</a>
+            <a href="#" className="hover:text-rose transition-colors">Contacto</a>
           </nav>
 
           <p
-            className="text-xs text-text-muted/60"
+            className="text-xs text-text-muted/50"
             style={{ fontFamily: "var(--font-dm-sans)" }}
           >
             © {new Date().getFullYear()} Mary. Hecho con ♥ para viajeras.
